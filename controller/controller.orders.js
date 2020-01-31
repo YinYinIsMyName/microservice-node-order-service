@@ -36,8 +36,8 @@ const getOrderById = (req, res) => {
     return OrderService.getOrderById(id).then(data => {
         //console.log(data[0].customerID)
         console.log({ data })
-        let customer_url = "http://localhost:2002/api/v1/customers/getbyId?id=" + `${data[0].customerID}`
-        let book_url = "http://localhost:2000/api/v1/book/getbooks?id=" + `${data[0].bookID}`
+         let customer_url = "http://localhost:8050/customer-service/getbyId?id=" + `${data[0].customerID}`
+         let book_url = "http://localhost:8050/book-service/getbooks?id=" + `${data[0].bookID}`
 
         try {
 

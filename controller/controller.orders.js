@@ -42,10 +42,10 @@ const getOrderById = (req, res) => {
         try {
 
             request(customer_url, (err, response, body) => {
-                  console.log(response)
-                if (response === undefined) {
-                    res.json({ message: "504 time out" })
-
+                let internalErr = JSON.parse(response.body)
+                console.log(internalErr.status)
+                if (internalErr.status == 404) {
+                    res.json({ message: "API doesn't return any data" })
 
                 }
                 else {
@@ -53,11 +53,17 @@ const getOrderById = (req, res) => {
                     var orderObject = [{ customerName: payload.payload[0].name, bookTitle: '' }]
                     console.log(orderObject)
                     request(book_url, (err, response, body) => {
-                        if (response.statusCode == 200) {
+                        internalErr = JSON.parse(response.body)
+                        if (internalErr.status == 404) {
+                            res.json({ message: "API doesn't return any data" })
+
+                        }
+                        else {
                             payload = JSON.parse(body)
                             orderObject[0].bookTitle = payload.payload[0].title
                             res.json({ success: true, payload: orderObject })
                         }
+
 
                     })
                 }

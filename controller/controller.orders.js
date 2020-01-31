@@ -3,6 +3,7 @@ const response = require('../model/response')
 const request = require('request')
 
 const addOrder = (req, res) => {
+    console.log(req.body)
     //if type of customer id must be the same with customers Table
     const OrderRequestedValue = {
         customerID: req.body.customerID,
@@ -34,13 +35,20 @@ const getOrderById = (req, res) => {
     const id = req.query.id
     return OrderService.getOrderById(id).then(data => {
         //console.log(data[0].customerID)
+        console.log({ data })
         let customer_url = "http://localhost:2002/api/v1/customers/getbyId?id=" + `${data[0].customerID}`
         let book_url = "http://localhost:2000/api/v1/book/getbooks?id=" + `${data[0].bookID}`
 
         try {
 
             request(customer_url, (err, response, body) => {
-                if (response.statusCode == 200) {
+                  console.log(response)
+                if (response === undefined) {
+                    res.json({ message: "504 time out" })
+
+
+                }
+                else {
                     let payload = JSON.parse(body)
                     var orderObject = [{ customerName: payload.payload[0].name, bookTitle: '' }]
                     console.log(orderObject)
@@ -48,16 +56,10 @@ const getOrderById = (req, res) => {
                         if (response.statusCode == 200) {
                             payload = JSON.parse(body)
                             orderObject[0].bookTitle = payload.payload[0].title
-                            res.json({success:true,payload:orderObject})
+                            res.json({ success: true, payload: orderObject })
                         }
-                       
-                       
-                    })
-                   
 
-                }
-                else {
-                    res.json(response({ message: err, success: false }))
+                    })
                 }
             })
         }

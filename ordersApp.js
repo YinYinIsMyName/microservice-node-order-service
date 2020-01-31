@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
-
+const eurekaHelper = require('./eureka-helper')
 require('dotenv').config()
 
 const orderRoute = require('./routes')
@@ -23,8 +23,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
-
-app.use('/api/v1',orderRoute)
+//api for eureka http://localhost:8050/order-service/api/v1/order/allorder
+app.use('/',orderRoute)
 app.listen(PORT, () => {
     console.log(`Order is running on ${PORT}`)
 })
+eurekaHelper.registerWithEureka('order-service', PORT);
